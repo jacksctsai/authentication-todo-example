@@ -1,5 +1,5 @@
 # Authentication Todo Example
 
-Original work of dreamerslab [Write a todo list with Express and MongoDB](http://dreamerslab.com/blog/en/write-a-todo-list-with-express-and-mongodb/)
+Original work of dreamerslab [Write a todo list with Express and MongoDB](https://github.com/dreamerslab/express-todo-example)
 
 Modified to add authentication support of both username/password and facebook OAuth.
