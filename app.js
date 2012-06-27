@@ -3,11 +3,18 @@
  */
 
 var express = require( 'express' );
+var everyauth = require('everyauth');
 
 var app = module.exports = express.createServer();
 
 // mongoose setup
 require( './db' );
+
+// autoentication setup
+var auth = require( './auth' );
+
+// add everyauth view helpers to express
+everyauth.helpExpress( app );
 
 var routes = require( './routes' );
 
@@ -20,7 +27,9 @@ app.configure( 'development', function (){
   app.use( express.logger());
   app.use( express.cookieParser());
   app.use( express.bodyParser());
-  app.use( routes.current_user );
+  //app.use( routes.current_user );
+  app.use( express.session({secret: 'nodeTWParty'}) );
+  app.use( everyauth.middleware() );
   app.use( app.router );
   app.use( express.errorHandler({ dumpExceptions : true, showStack : true }));
 });
@@ -30,17 +39,19 @@ app.configure( 'production', function (){
   app.set( 'view engine', 'ejs' );
   app.use( express.cookieParser());
   app.use( express.bodyParser());
-  app.use( routes.current_user );
+  //app.use( routes.current_user );
+  app.use( express.session({secret: 'nodeTWParty'}) );
+  app.use( everyauth.middleware() );
   app.use( app.router );
   app.use( express.errorHandler());
 });
 
 // Routes
 app.get( '/', routes.index );
-app.post( '/create', routes.create );
-app.get( '/destroy/:id', routes.destroy );
-app.get( '/edit/:id', routes.edit );
-app.post( '/update/:id', routes.update );
+app.post( '/create', auth.requireLogin, routes.create );
+app.get( '/destroy/:id', auth.requireLogin, routes.destroy );
+app.get( '/edit/:id', auth.requireLogin, routes.edit );
+app.post( '/update/:id', auth.requireLogin, routes.update );
 
 app.listen( 3001, '127.0.0.1', function (){
   console.log( 'Express server listening on port %d in %s mode', app.address().port, app.settings.env );

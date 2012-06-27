@@ -7,6 +7,14 @@ var Todo = new Schema({
     updated_at : Date
 });
 
+var User = new Schema({
+    id    : { type : String, unique : true },
+    name  : String,
+    profile    : String,
+    password   : String
+});
+
 mongoose.model( 'Todo', Todo );
+mongoose.model( 'User', User );
 
 mongoose.connect( 'mongodb://localhost/express-todo' );
